@@ -126,6 +126,9 @@ The variables we need are: Child.ID, Visit, Ethnicity, Diagnosis, Gender, Age, A
 It would be smart to rename the MullenRaw and ExpressiveLangRaw into something you can remember (i.e. nonVerbalIQ, verbalIQ)
 
 ```{r}
+library(plyr)
+library(tidyverse)
+
 # Selecting only the variables we are interested in
 DATA_demo = select(demo_data, ID, VISIT, Gender, Age, Ethnicity, Diagnosis, ADOS, MullenRaw, ExpressiveLangRaw)
 DATA_LU = select(LU_data, ID, VISIT, MOT_MLU, MOT_LUstd, CHI_MLU, CHI_LUstd)
