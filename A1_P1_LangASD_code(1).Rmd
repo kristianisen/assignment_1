@@ -228,7 +228,19 @@ List all kids who:
 3. have not completed all trials. Tip: Use pipes to solve this
 
 ```{r}
+library(magrittr)
+?magrittr()
+
 # 1
+ChiMLU_means = by(DATA$CHI_MLU, DATA$ID, FUN = mean)
+ChiMLU_means[ChiMLU_means > 2.7]
+
+
+
+# 2
+filter(DATA, CHI_MLU < 1.5 & VISIT == 1)
+
+# 3
 
 
 ```
