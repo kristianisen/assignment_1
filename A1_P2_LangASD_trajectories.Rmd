@@ -1,0 +1,339 @@
+---
+title: "Assignment 1 - Language Development in ASD - part 2"
+author: "Riccardo Fusaroli and Kristian Isen"
+date: "July 7, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)   
+```
+
+# Language development in Autism Spectrum Disorder (ASD)
+
+Background: Autism Spectrum Disorder is often related to language impairment. However, this phenomenon has not been empirically traced in detail: i) relying on actual naturalistic language production, ii) over extended periods of time. We therefore videotaped circa 30 kids with ASD and circa 30 comparison kids (matched by linguistic performance at visit 1) for ca. 30 minutes of naturalistic interactions with a parent. We repeated the data collection 6 times per kid, with 4 months between each visit. We transcribed the data and counted: 
+i) the amount of words that each kid uses in each video. Same for the parent.
+ii) the amount of unique words that each kid uses in each video. Same for the parent.
+iii) the amount of morphemes per utterance (Mean Length of Utterance) displayed by each child in each video. Same for the parent. 
+
+This data is in the file you prepared in the previous class. 
+
+NB. A few children have been excluded from your datasets. We will be using them next week to evaluate how good your models are in assessing the linguistic development in new participants.
+
+We then want to test the language trajectory of child and parent over time.
+
+This Markdown is structured in the following way:
+
+1. The exercises: read them carefully. Under each exercise you will have to write your answers, once you have written and run the code. This is the part that you have to directly send to the teachers.
+2. An (optional) guided template full of hints for writing the code to solve the exercises. Fill in the code and the paragraphs as required. Then report your results under the exercise part.
+3. In exercise 4 you will be asked to create the best possible model of language development in TD and ASD children, picking and choosing whatever additional variables you want from the dataset. Next time, the models produced by the different groups will compete against each other to see who can produce the best model, so choose carefully!
+
+You will have to have a github repository for the code and send the answers to Celine and Riccardo without code (but a link to your github repository). This way we can check your code, but you are also forced to figure out how to report your analyses :-)
+
+N.B. The following lines are a summary of the questions to be answered, the step-by-step instructions and tips are below.
+
+## Exercise 1) Preliminary Data Exploration
+
+Describe the participant samples in the dataset (e.g. by diagnosis, age, etc.). Do you think the two groups are well balanced? If not, what do you think was the reason?
+
+  In order to investigate the balance between the two groups in the sample, we performed t-tests as lm()'s as well as looking at simple describing statistics - also visualised in plots. To do this, we used R (R Core Team (2017), lme4 (Bates, Maechler, Bolker & Walker, 2015), lmerTest (Kuznetsova, Brockhoff & Christensen, 2016) and ggplot2 (Wickham, 2009). 
+  
+  We are interested in the balance with regards to the allocation of age and gender in ASD or TD children (diagnosis). In this experiment 166 children with Autism Spectrum Disorder and 186 children who are typical developing - wich seems adequate in both groups. Furthermore, the TD-group had a significant lower ADOS (β = -13.33, se = 0.75, t-value = -17.89, p < 0.05) as expected. Between genders the age-allocation was unsignificant (β = -1.04, se = 2.61, t-value = -0.40, p > 0.05), which naturally is preferable. Between diagnosis-groups we find a significant difference in age-allocation (β = -12.63, se = 1.03, t-value = -12.32, p < 0.05). This difference is also clear in a boxplot and could potentially affect results. The allocation of ethnicity between the diagnosis-groups did not yield significant results with regards to any ethnic group. Additionally, there was no significant difference between gender-allocation between diagnosis-groups (β = 0.33, se = 0.29, z-value = 1.12, p > 0.05), which is good. 
+  
+  The groups in the dataset are overall balanced. The only significant difference is with regards to age, which is possibly explained by the fact that ASD is not commonly diagnosed with children before approximately age 4. 
+
+
+### Exercise 2) Children learning language: the effects of time and ASD
+Describe linguistic development in TD and ASD children in terms of Mean Length of Utterance (MLU)?
+
+ In order to investigate the effects of time and ASD on childrens' MLU, we did both visualising plots as well as linear models. To do this, we used R (R Core Team (2017), lme4 (Bates, Maechler, Bolker & Walker, 2015), lmerTest (Kuznetsova, Brockhoff & Christensen, 2016) and ggplot2 (Wickham, 2009). 
+
+  Firstly, we would have to choose the indicator of time as it could be both visits and age. In this prose answer, we rely on visits as the indicator of time. From looking at the plot, we expect the MLU from TD-children to be faster developing than MLU's of ASD-children. We did a model with both VISIT and Diagnosis as fixed predictors (with and without correlation) and VISIT per ID as random effects in order to control for repeated measures effects. In order to evaluate which model is best we decided to compare R-squared values as well as comparing both models to a null-model. Both were significant from the null-model, but the correlated model yielded a higher R-squared value (R-squared: 0.35) than the model with no correlation (R-squared: 0.22). However, no one of the models explained a "good" amount of variance, since both R-squared values are low.  
+
+
+### Exercise 3) Child directed speech as a moving target
+Describe how parental use of language changes over time in terms of MLU. What do you think is going on?
+
+ In order to investigate the effects of time and ASD on mothers' MLU (or reversed), we did both visualising plots as well as linear models. To do this, we used R (R Core Team (2017), lme4 (Bates, Maechler, Bolker & Walker, 2015), lmerTest (Kuznetsova, Brockhoff & Christensen, 2016) and ggplot2 (Wickham, 2009). 
+
+  Firstly, we would have to choose the indicator of time as it could be both visits and age. In this prose answer, we rely on the results from visits as the indicator of time. We therefore used VISIT and Diagnosis as fixed effects and VISIT and ID as random effects in the model. From the plot we do not immediately spot a difference in the developement, however the MLU of mothers speaking to TD-children seems to be in a constantly higher level throughout the experiment. In the model with no correlation, being a mother to a TD-child had significant effects on the MLU (β = 0.50, se = 0.12, t-value = 4.36, p < 0.05). Furthermore, the mothers also developed their MLU significantly over time (β = 0.12, se = 0.02, t-value = 6.54, p < 0.05). The correlation between Diagnosis and VISIT did not have a significant effect on the mother MLU however (β = 0.04, se = 0.04, t-value = 1.10, p > 0.05).
+
+
+### Exercise 4) Looking into "individual differences" (demographic, clinical or cognitive profiles)
+The dataset contains some additional variables characterizing the kids’ cognitive and clinical profile: ADOS (autism severity), MSEL EL (Expressive Language, that is, verbal IQ, or linguistic skills at first visit as assessed by a psychologist using Mullen Scales of Early Learning), MSEL VR (Visual Reception, used as a proxy for non verbal IQ at first visit), Age, Gender, Ethnicity. Would it make sense to add any of them to your model of linguistic trajectories? Create the best possible model (the one that best explain the data, with MLU as outcome). Next time your model will be tested on new participants, and we will proclaim a winner. Describe your strategy to select the best models (how did you choose the variables to include?) and send the code to Riccardo and Celine.
+
+  As a measure of the "best" model we have decided to compare R-squared values of the models. The weakness of this approach is a possible weak ability to infer these results in a meaningful way - in other words; interpreting the effects in a way, that also makes emirical sense. However, we are not accounting for this in the following. 
+  
+  We constructed three different models investigating the effects of cognitive predictors and tested the R-squared value of them all. The models all had Children MLU as outcome and VISIT and ID as random effects. The best model had Age, Diagnosis, children number of words, children number of unique words and both verbal and non verbal IQ as fixed effects. All the fixed effects were correlated. This model yeilded a R-squared value of 0.796. 
+  
+  However, regarding this model it is hard to infer the value of each of the fixed effects in a meaningful way. 
+
+
+### [OPTIONAL] Exercise 5) Comment on how the three linguistic variables measure linguistic performance (the so-called "construct validity" of the measures). Do they express the same variance?
+
+[HERE GOES YOUR ANSWER]
+
+### Structure of the code chunks
+
+Basic stuff:
+- Loading the libraries
+- Setting the directory and loading the data
+- Look at the data (which variables are there? Are they in the right format?) and describe the participants (by diagnosis)
+
+We will try to answer three questions:
+
+- Do children with ASD develop language differently from non-ASD children?
+- Do parents speak differently to children with ASD than to non-ASD ones?
+- Which variables should we use to best explain the child linguistic performance?
+  
+### Loading the relevant libraries
+
+Load necessary libraries : what will you need?
+
+- e.g. something to plot with
+- e.g. mixed effects models
+
+```{r Load Libraries}
+# Loading libraries
+library(lmerTest)
+library(ggplot2)
+library(MuMIn)
+```
+
+### Define your working directory and load the data
+
+- Create a new variable called locpath (localpath)
+- Set it to be equal to your working directory
+- Move to that directory (setwd(locpath))
+- Load the data you saved last time (use read_csv(fileName))
+
+```{r Load Data}
+
+#getwd()
+locpath= ("~/Desktop/ExpMeth3_Assignments/Assignment1_KristianIsen")
+setwd(locpath)
+DATA = read.csv("ExpMeth3_Assignment1.csv")
+
+?ggplot()
+```
+
+### Characterize the participants (Exercise 1)
+
+Identify relevant variables: participants demographic characteristics, diagnosis, ADOS, Verbal IQ, Non Verbal IQ, Visit, Number of words used, Number of unique words used, length of utterance in both child and parents.
+
+Make sure the variables are in the right format.
+
+Describe the characteristics of the two groups of participants and whether the two groups are well matched.
+
+```{r}
+library(ggplot2)
+as.numeric(DATA$Age)
+
+# Visualisation of participant (sample) spread (no scores accounted for)
+DATA1 = subset(DATA, VISIT == 1)
+
+# Length (N) of both diagnosis-groups
+DATA_ASD = subset(DATA, Diagnosis == "ASD")
+DATA_TD = subset(DATA, Diagnosis == "TD")
+nrow(DATA_ASD)
+nrow(DATA_TD)
+
+# Boxplot on ADOS between diagnosis-groups
+Diagnosis_ADOS_plot = ggplot(DATA1, aes(DATA1$Diagnosis, DATA1$ADOS)) + geom_boxplot()
+Diagnosis_ADOS_plot
+Diagnosis_ADOS_test = lm(ADOS ~ Diagnosis, DATA1)
+summary(Diagnosis_ADOS_test)
+
+
+# Age and gender plot and test
+AgeGender_plot = ggplot(DATA1, aes(DATA1$Gender, DATA1$Age)) + geom_boxplot()
+AgeGender_plot
+AgeGender_test = lm(Age ~ Gender, DATA1)
+summary(AgeGender_test)
+
+# Age and diagnosis plot and test
+AgeDiagnosis_plot = ggplot(DATA1, aes(DATA1$Diagnosis, DATA1$Age)) + geom_boxplot()
+AgeDiagnosis_plot
+AgeDiagnosis_test = lm(Age ~ Diagnosis, DATA1)
+summary(AgeDiagnosis_test)
+
+# Gender and Diagnosis and test
+GenderDiagnosis_test = glm(Gender ~ Diagnosis, family = binomial, DATA)
+summary(GenderDiagnosis_test)
+
+# Gender and Diagnosis and test
+DiagnosisEthnicity_test = glm(Diagnosis ~ Ethnicity, family = binomial, DATA)
+summary(DiagnosisEthnicity_test)
+
+
+### Overall development in age (visualisation)
+
+## At visit 1 for all
+#ChiMLU_plot1 = ggplot(DATA1, aes(DATA1$Age, DATA1$CHI_MLU)) + geom_point()
+#ChiMLU_plot1
+
+## At visit 6 for all
+#DATA6 = subset(DATA, VISIT == 6)
+#ChiMLU_plot6 = ggplot(DATA6, aes(DATA6$Age, DATA6$CHI_MLU)) + geom_point()
+#ChiMLU_plot6
+
+# Both visit 1 and 6 MLU's plotted together
+#ChiMLU_plot_1n6 = ggplot() + geom_point(data = DATA1, aes(x = DATA1$Age, y = DATA$CHI_MLU), color = "red") + geom_point(data = DATA6, aes(x = DATA6$Age, y = DATA6$CHI_MLU), color = "green")
+#ChiMLU_plot_1n6
+
+```
+
+[REPORT THE RESULTS]
+
+## Let's test hypothesis 1: Children with ASD display a language impairment  (Exercise 2)
+
+### Hypothesis: The child's MLU changes: i) over time, ii) according to diagnosis
+
+Let's start with a simple mixed effects linear model
+
+Remember to plot the data first and then to run a statistical test.
+- Which variable(s) should be included as fixed factors?
+- Which variable(s) should be included as random factors?
+
+```{r}
+## Linear model to visualise development (age)
+MluDiagnosis_lm = ggplot(DATA, aes(DATA$Age, DATA$CHI_MLU, colour = Diagnosis)) + geom_point() + geom_smooth(method = "lm") + labs(x = "Age (months)", y = "MLU of child", title = "MLU for children over time")
+MluDiagnosis_lm
+
+## Linear model to visualise development (visits)
+MluDiagnosis_lm2 = ggplot(DATA, aes(DATA$VISIT, DATA$CHI_MLU, colour = Diagnosis)) + geom_point() + geom_smooth(method = "lm") + labs(x = "Visit (number)", y = "MLU of child", title = "MLU for children over time")
+MluDiagnosis_lm2
+
+
+### Lme on age and diagnosis
+MLU_model1 = lmer(CHI_MLU ~ 1 + Age + Diagnosis + (1 + Age|ID), DATA)
+summary(MLU_model1)
+
+### Lme on age and diagnosis and correlation
+MLU_model_corr = lmer(CHI_MLU ~ 1 + Age * Diagnosis + (1 + Age|ID), DATA)
+summary(MLU_model_corr)
+
+
+### Lme on VISIT and diagnosis
+MLU_model2 = lmer(CHI_MLU ~ 1 + VISIT + Diagnosis + (1 + VISIT|ID), DATA)
+summary(MLU_model2)
+
+
+### Lme on VISIT and diagnosis and correlation
+MLU_model_corr2 = lmer(CHI_MLU ~ 1 + VISIT * Diagnosis + (1 + VISIT|ID), DATA)
+summary(MLU_model_corr2)
+
+```
+
+How would you evaluate whether the model is a good model?
+
+```{r}
+# Creating a null-model
+null_model = lmer(CHI_MLU ~ 1 + (1 + VISIT|ID), DATA)
+
+# Comparing the R-squares
+r.squaredGLMM(null_model)
+r.squaredGLMM(MLU_model2)
+r.squaredGLMM(MLU_model_corr2)
+
+# testing against model with NO correlation (using visit as time-indicator)
+null_noCorr_test = anova(null_model, MLU_model2)
+null_noCorr_test
+
+# testing against model with correlation (using visit as time-indicator)
+null_Corr_test = anova(null_model, MLU_model_corr2)
+null_Corr_test
+```
+
+Not too good, right? Let's check whether a growth curve model is better.
+Remember: a growth curve model assesses whether changes in time can be described by linear, or quadratic, or cubic (or... etc.) components.
+First build the different models, then compare them to see which one is better
+
+```{r}
+
+```
+
+Exciting right?
+Now it's time to report our results.
+Remember to report:
+- the estimates for each predictor (beta estimate, standard error, p-value)
+- A plain word description of the results
+
+[REPORT THE RESULTS]
+Linguistic development of children MLU is affected by ... [COMPLETE]
+
+## Let's test hypothesis 2: Parents speak equally to children with ASD and TD  (Exercise 3)
+
+### Hypothesis: Parental MLU changes: i) over time, ii) according to diagnosis
+
+```{r}
+## Linear model; development with parents (age as time)
+PmluDiagnosis_lm = ggplot(DATA, aes(DATA$Age, DATA$MOT_MLU, colour = Diagnosis)) + geom_point() + geom_smooth(method = "lm") + labs(x = "Age (months)", y = "MLU of mother", title = "MLU for mother over time")
+PmluDiagnosis_lm
+
+## Linear model; development (visits as time)
+PmluDiagnosis_lm2 = ggplot(DATA, aes(DATA$VISIT, DATA$MOT_MLU, colour = Diagnosis)) + geom_point() + geom_smooth(method = "lm") + labs(x = "Visit (number)", y = "MLU of mother", title = "MLU for mothers over time")
+PmluDiagnosis_lm2
+
+## Diagnosis and visit
+pMLU_model = lmer(MOT_MLU ~ 1 + Diagnosis + VISIT + (1 + VISIT|ID), DATA)
+summary(pMLU_model)
+
+pMLU_model_corr = lmer(MOT_MLU ~ 1 + Diagnosis * VISIT + (1 + VISIT|ID), DATA)
+summary(pMLU_model_corr)
+
+
+## Supplementary on both time and diagnosis + correlations
+### Lme on age and diagnosis
+pMLU_model1 = lmer(MOT_MLU ~ 1 + Age + Diagnosis + (1 + Age|ID), DATA)
+summary(pMLU_model1)
+
+### Lme on age and diagnosis and correlation
+pMLU_model_corr = lmer(MOT_MLU ~ 1 + Age * Diagnosis + (1 + Age|ID), DATA)
+summary(pMLU_model_corr)
+
+
+### Lme on VISIT and diagnosis
+pMLU_model2 = lmer(MOT_MLU ~ 1 + VISIT + Diagnosis + (1 + VISIT|ID), DATA)
+summary(pMLU_model2)
+
+### Lme on VISIT and diagnosis and correlation
+pMLU_model_corr2 = lmer(MOT_MLU ~ 1 + VISIT * Diagnosis + (1 + VISIT|ID), DATA)
+summary(pMLU_model_corr2)
+```
+
+[REPORT THE RESULTS]
+
+### Adding new variables (Exercise 4)
+
+Your task now is to figure out how to best describe the children linguistic trajectory. The dataset contains a bunch of additional demographic, cognitive and clinical variables (e.g.verbal and non-verbal IQ). Try them out and identify the statistical models that best describes your data (that is, the children's MLU). Describe how you selected the best model and send the code to run the model to Riccardo and Celine.
+
+
+```{r}
+# Creating the best model ever to describe the children linguistic trajectory
+### Child from all correlated
+bestModel_ever = lmer(CHI_MLU ~ 1 + VISIT * Diagnosis * VerbalIQ * nonVerbalIQ + (1 + VISIT|ID), DATA)
+r.squaredGLMM(bestModel_ever)
+
+### Child from all correlated (Age as time-indicator) 
+bestModel_ever2 = lmer(CHI_MLU ~ 1 + Age * Diagnosis * tokens_CHI * types_CHI * VerbalIQ * nonVerbalIQ + (1 + VISIT|ID), DATA)
+r.squaredGLMM(bestModel_ever2)
+
+### Child from all correlated from mother's language
+bestModel_ever3 = lmer(CHI_MLU ~ 1 + Age * Diagnosis * types_CHI * tokens_CHI + (1 + VISIT|ID), DATA)
+r.squaredGLMM(bestModel_ever3)
+
+
+# Creating the best model ever to describe the mother's linguistic trajectory (just for fun)
+### 
+bestModel_ever3 = lmer(MOT_MLU ~ 1 + VISIT * Diagnosis * MOT_MLU * types_MOT * tokens_MOT + (1 + VISIT|ID), DATA)
+r.squaredGLMM(bestModel_ever3)
+
+bestModel_ever4 = lmer(MOT_MLU ~ 1 + Age * Diagnosis * CHI_MLU * types_CHI * tokens_CHI + (1 + VISIT|ID), DATA)
+r.squaredGLMM(bestModel_ever4)
+
+
+
+```
+
+REPORT OF THE RESULTS
