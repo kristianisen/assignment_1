@@ -229,19 +229,29 @@ List all kids who:
 
 ```{r}
 library(magrittr)
+library(dplyr)
 ?magrittr()
 
 # 1
 ChiMLU_means = by(DATA$CHI_MLU, DATA$ID, FUN = mean)
 ChiMLU_means[ChiMLU_means > 2.7]
 
-
+# 1 -- using filter() -- 
+DATA %>% 
+  group_by(ID) %>% 
+  summarise(ChiMLU_m = mean(CHI_MLU, na.rm = TRUE)) %>% 
+  filter(ChiMLU_m > 2.7)
 
 # 2
-filter(DATA, CHI_MLU < 1.5 & VISIT == 1)
+#filter(DATA, CHI_MLU < 1.5 & VISIT == 1)
+
 
 # 3
-
+Kids_notFinished = na.omit(DATA) %>% 
+      group_by(ID) %>% 
+      tally() %>% 
+      filter(n < 6)
+Kids_notFinished
 
 ```
 
@@ -252,7 +262,11 @@ USING ARRANGE
 2. Sort kids to find the kid who produced the least amount of words on the 1st visit.
 
 ```{r}
+library(dplyr)
 
+?arrange()
+as.numeric(DATA$tokens_CHI)
+dplyr::arrange(DATA$VISIT == 6, DATA$tokens_CHI)
 
 ```
 
@@ -262,7 +276,8 @@ USING SELECT
 2. What happens if you include the name of a variable multiple times in a select() call?
 
 ```{r}
-
+# 1
+DATA2 = subset(DATA[DATA$Diagnosis == "ASD"], DATA$CHI_MLU, DATA$tokens_CHI)
 
 
 ```
@@ -274,6 +289,12 @@ USING MUTATE, SUMMARISE and PIPES
 3. The solution to task above enables us to assess the average amount of words produced by each child. Why don't we just use these average values to describe the language production of the children? What is the advantage of keeping all the data?e
 
 ```{r}
+by(DATA$CHI_MLU, DATA$ID, FUN = mean)
+?mutate()
+?aggregate()
 
+DATA$ChiMLU_mean %>%
+  group_by(ID) %>% 
+  summarise(ChiMLU_m = mean(CHI_MLU))
 
 ```
